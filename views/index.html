@@ -6,21 +6,36 @@
       #wrapper{
         width: 900px;
         margin: 0 auto;
+        background-color: #eee;
+        padding:10px;
+      }
+      body{
+        margin: 0;
+        padding: 0;
+        background-color: #333;
       }
     </style>
   </head>
   <body>
     <div id="wrapper">
-      <h1>Snippets</h1>
+      <div id="header">
+        <h1>Go Snippets!</h1>
+      </div>
+      <form action="/create" method="post">
+        <input type="text" name="name" placeholder='Name' /><br />
+        <textarea name="description" placeholder='Description'></textarea><br />
+        <textarea name="code" placeholder='Code'></textarea><br />
+        <input type="submit" value="Submit" />
+      </form>
       {{range .}}
       <div id='S{{.Name}}' class="snippet">
         <h2>{{.Name}}</h2>
         <p>
           {{.Description}}
         </p>
-        <code>
-          {{.Code}}
-        </code>
+        <pre>
+{{.Code}}
+        </pre>
         {{end}}
       </div>
     </div>

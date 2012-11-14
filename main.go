@@ -11,7 +11,8 @@ import (
 
 	"code.google.com/p/gorilla/mux"
 	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
+	//"labix.org/v2/mgo/bson"
+
 )
 
 //Stores a single instance of a code snippet
@@ -23,11 +24,16 @@ type Snippet struct{
 
 //Returns a list of all snippets stored in the database
 //TODO: add pagination
-func AllSnippets() []Snippet {
-	return data
+func AllSnippets()(snippets []Snippet) {
+	session.DB("gosnip").C("snippets").Find(nil).Iter().All(&snippets)
+	return
 }
 
-var snippetsCollection mgo.Collection
+func CreateSnippet(snippet *Snippet) {
+	session.DB("gosnip").C("snippets").Insert(snippet)
+}
+
+var session *mgo.Session
 
 var data []Snippet
 var indexTemplate, err = template.ParseFiles("views/index.html")
@@ -36,15 +42,17 @@ func homeHandler(rw http.ResponseWriter, req * http.Request){
 	indexTemplate.Execute(rw, AllSnippets())
 }
 
+func createHandler(rw http.ResponseWriter, req * http.Request){
+	CreateSnippet(&Snippet{Name: req.FormValue("name"), Description: req.FormValue("description"), Code: req.FormValue("code") })
+	indexTemplate.Execute(rw, AllSnippets())
+}
+
 func main(){
-	session, err := mgo.Dial("localhost")
+	session, err = mgo.Dial("localhost")
 	if err != nil {
 		log.Panic(err)
 	}
 	defer session.Close()
-
-	snippetsCollection := session.DB("gosnips").C("snippets")
-
 
 	data = make([]Snippet, 100)
 	data[0] = Snippet{"helloworld", "Hello world snip", `
@@ -62,6 +70,7 @@ func main(){
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler)
+	r.HandleFunc("/create", createHandler)
 	http.Handle("/", r)
 
 	http.ListenAndServe(":" + strconv.Itoa(*port), nil)
