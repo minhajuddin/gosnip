@@ -4,6 +4,15 @@
     <title>Go snippets</title>
   </head>
   <body>
-    <h1>This is an awesome response at {{.Time}}</h1>
+    <h1>Snippets</h1>
+    {{range .}}
+    <h2>{{.Name}}</h2>
+    <p>
+      {{.Description}}
+    </p>
+    <code>
+      {{.Code}}
+    </code>
+    {{end}}
   </body>
 </html>

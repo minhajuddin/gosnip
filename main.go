@@ -2,23 +2,40 @@ package main
 
 import (
 	"strconv"
-	//"fmt"
-	"code.google.com/p/gorilla/mux"
-	"net/http"
+
 	"flag"
 	"log"
+
+	"net/http"
 	"html/template"
-	"time"
+
+	"code.google.com/p/gorilla/mux"
 )
 
+type Snippet struct{
+	Name string
+	Description string
+	Code string
+}
+
+var data []Snippet
 var indexTemplate, err = template.ParseFiles("views/index.html")
 
 func homeHandler(rw http.ResponseWriter, req * http.Request){
-	indexTemplate.Execute(rw, struct{Time time.Time}{time.Now()})
+	indexTemplate.Execute(rw, data)
 }
 
 func main(){
-	port := flag.Int("port", 3050, "port to run snippet server")
+	data = make([]Snippet, 100)
+	data[0] = Snippet{"helloworld", "Hello world snip", `
+		package main
+
+		import "fmt"
+
+		func main() {
+			fmt.Println("Hello World")
+		}`}
+	port := flag.Int("port", 3000, "port to run snippet server")
 	flag.Parse()
 
 	log.Println("started server on", *port)
