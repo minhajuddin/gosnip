@@ -6,8 +6,9 @@ import (
 	"flag"
 	"log"
 
-	"net/http"
+	"html"
 	"html/template"
+	"net/http"
 
 	"os/exec"
 	"io/ioutil"
@@ -23,7 +24,7 @@ func (s *Snippet) Pygmentize() {
 	pygmentIn, _ := pygmentCmd.StdinPipe()
 	pygmentOut, _ := pygmentCmd.StdoutPipe()
 	pygmentCmd.Start()
-	pygmentIn.Write([]byte(s.Code))
+	pygmentIn.Write([]byte(html.EscapeString(s.Code)))
 	pygmentIn.Close()
 	highlightedCodeBytes, _ := ioutil.ReadAll(pygmentOut)
 	s.HighlightedCode = template.HTML(highlightedCodeBytes)

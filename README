@@ -1,6 +1,18 @@
 Go snippets
- - Should be able to add a snippet
-  - Should be able to suggest an improvement through a fork?
- - Should be able to view it on the web/cli
- - Should be able to store it locally and sync them
+  - Add ability for users to login using github|google
+  - A snippet's code should be formatted through gofmt
+  - A user should be able to 
+     - Add a snippet
+     - Tag a snippet
+     - Comment on a snippet
+     - Star a snippet
+     - Download the snippets to a local webserver or cli interface 
+     - Should be able to upvote/downvote a snippet or it's derivative
+     - Search snippets
+     - Sanitize the user input
 
+  - Should be able to suggest an improvement through a fork?
+
+TODO
+====
+  - Change the color to match the go package styles
