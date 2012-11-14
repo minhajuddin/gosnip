@@ -47,6 +47,7 @@ func AllSnippets()(snippets []Snippet) {
 }
 
 func CreateSnippet(snippet *Snippet) {
+	snippet.Pygmentize()
 	session.DB("gosnip").C("snippets").Insert(snippet)
 }
 
@@ -60,9 +61,8 @@ func homeHandler(rw http.ResponseWriter, req * http.Request){
 
 func createHandler(rw http.ResponseWriter, req * http.Request){
 	s := &Snippet{Name: req.FormValue("name"), Description: req.FormValue("description"), Code: req.FormValue("code") }
-	s.Pygmentize()
-	CreateSnippet(s)
-	indexTemplate.Execute(rw, AllSnippets())
+	go CreateSnippet(s)
+	http.Redirect(rw, req, "/", 302)
 }
 
 func main(){
@@ -80,7 +80,7 @@ func main(){
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler)
 	r.HandleFunc("/create", createHandler).Methods("POST")
-	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("/home/minhajuddin/gocode/src/gosnip/public"))))
+	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
 	http.Handle("/", r)
 
 	http.ListenAndServe(":" + strconv.Itoa(*port), nil)
