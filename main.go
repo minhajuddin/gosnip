@@ -9,17 +9,34 @@ import (
 	"net/http"
 	"html/template"
 
+	"os/exec"
+	"io/ioutil"
+
 	"code.google.com/p/gorilla/mux"
 	"labix.org/v2/mgo"
 	//"labix.org/v2/mgo/bson"
 
 )
 
+func (s *Snippet) Pygmentize() {
+	pygmentCmd := exec.Command("bash", "-c", "pygmentize -l go -f html")
+	pygmentIn, _ := pygmentCmd.StdinPipe()
+	pygmentOut, _ := pygmentCmd.StdoutPipe()
+	pygmentCmd.Start()
+	pygmentIn.Write([]byte(s.Code))
+	pygmentIn.Close()
+	highlightedCodeBytes, _ := ioutil.ReadAll(pygmentOut)
+	s.HighlightedCode = template.HTML(highlightedCodeBytes)
+	pygmentCmd.Wait()
+}
+
+
 //Stores a single instance of a code snippet
 type Snippet struct{
 	Name string
 	Description string
 	Code string
+	HighlightedCode template.HTML
 }
 
 //Returns a list of all snippets stored in the database
@@ -35,7 +52,6 @@ func CreateSnippet(snippet *Snippet) {
 
 var session *mgo.Session
 
-var data []Snippet
 var indexTemplate, err = template.ParseFiles("views/index.html")
 
 func homeHandler(rw http.ResponseWriter, req * http.Request){
@@ -43,7 +59,9 @@ func homeHandler(rw http.ResponseWriter, req * http.Request){
 }
 
 func createHandler(rw http.ResponseWriter, req * http.Request){
-	CreateSnippet(&Snippet{Name: req.FormValue("name"), Description: req.FormValue("description"), Code: req.FormValue("code") })
+	s := &Snippet{Name: req.FormValue("name"), Description: req.FormValue("description"), Code: req.FormValue("code") }
+	s.Pygmentize()
+	CreateSnippet(s)
 	indexTemplate.Execute(rw, AllSnippets())
 }
 
@@ -54,15 +72,6 @@ func main(){
 	}
 	defer session.Close()
 
-	data = make([]Snippet, 100)
-	data[0] = Snippet{"helloworld", "Hello world snip", `
-		package main
-
-		import "fmt"
-
-		func main() {
-			fmt.Println("Hello World")
-		}`}
 	port := flag.Int("port", 3000, "port to run snippet server")
 	flag.Parse()
 
@@ -70,7 +79,8 @@ func main(){
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", homeHandler)
-	r.HandleFunc("/create", createHandler)
+	r.HandleFunc("/create", createHandler).Methods("POST")
+	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("/home/minhajuddin/gocode/src/gosnip/public"))))
 	http.Handle("/", r)
 
 	http.ListenAndServe(":" + strconv.Itoa(*port), nil)

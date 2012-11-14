@@ -2,19 +2,7 @@
 <html>
   <head>
     <title>Go snippets</title>
-    <style type="text/css">
-      #wrapper{
-        width: 900px;
-        margin: 0 auto;
-        background-color: #eee;
-        padding:10px;
-      }
-      body{
-        margin: 0;
-        padding: 0;
-        background-color: #333;
-      }
-    </style>
+    <link href="/public/screen.css" rel="stylesheet" />
   </head>
   <body>
     <div id="wrapper">
@@ -34,7 +22,7 @@
           {{.Description}}
         </p>
         <pre>
-{{.Code}}
+{{.HighlightedCode}}
         </pre>
         {{end}}
       </div>
