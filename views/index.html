@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Go snippets</title>
+    <title>gosnip - Go snippets</title>
     <link href="/public/screen.css" rel="stylesheet" />
     <script type="text/javascript">
 
@@ -10,35 +10,32 @@
       _gaq.push(['_trackPageview']);
 
       (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
+       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+       })();
 
-    </script>
-  </head>
+     </script>
+   </head>
   <body>
     <div id="wrapper">
       <div id="header">
-        <h1>Go Snippets!</h1>
+        <h1><a href='/'>gosnip - Go snippets</a></h1>
       </div>
-      <form action="/create" method="post">
-        <input type="text" name="name" placeholder='Name' class='name' /><br />
-        <textarea name="description" placeholder='Description' class='description'></textarea><br />
-        <textarea name="code" placeholder='Code' class='code'></textarea><br />
-        <input type="submit" value="Submit" class='submit' />
-      </form>
-      {{range .}}
-      <div id='S{{.Name}}' class="snippet">
-        <h2>{{.Name}}</h2>
-        <p>
-          {{.Description}}
-        </p>
-        <pre>
-{{.HighlightedCode}}
-        </pre>
+      <div id="content">
+        {{range .}}
+        <div id='S{{.Name}}' class="snippet">
+          <h2>{{.Name}}</h2>
+          <p>
+            {{.Description}}
+          </p>
+          {{.HighlightedCode}}
+        </div>
         {{end}}
+      </div>
+      <div id="footer">
+        <a href='/'>gosnip.org</a>
       </div>
     </div>
   </body>
-</html>
+ </html>
