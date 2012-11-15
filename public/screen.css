@@ -4,3 +4,4 @@ textarea{font-family: Monaco, Courier, "DejaVu Sans Mono", "Bitstream Vera Sans 
 textarea.code{height: 300px;}
 textarea.description{height: 50px;}
 input.submit{font-size:1.5em;padding: 0 20px}
+.highlight{overflow-x: scroll;}
