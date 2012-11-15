@@ -6,9 +6,6 @@ import (
 	"flag"
 	"log"
 
-	"bytes"
-	"strings"
-
 	"html/template"
 	"net/http"
 
@@ -21,56 +18,12 @@ import (
 
 )
 
-type writer interface {
-	WriteString(string) (int, error)
-}
-const escapedChars = `<>`
-
-func escape(w writer, s string) error {
-	i := strings.IndexAny(s, escapedChars)
-	for i != -1 {
-		if _, err := w.WriteString(s[:i]); err != nil {
-			return err
-		}
-		var esc string
-		switch s[i] {
-		case '<':
-			esc = "&lt;"
-		case '>':
-			esc = "&gt;"
-		default:
-			panic("unrecognized escape character")
-		}
-		s = s[i+1:]
-		if _, err := w.WriteString(esc); err != nil {
-			return err
-		}
-		i = strings.IndexAny(s, escapedChars)
-	}
-	_, err := w.WriteString(s)
-	return err
-}
-
-// EscapeString escapes special characters like "<" to become "&lt;". It
-// escapes only five such characters: <, >, &, ' and ".
-// UnescapeString(EscapeString(s)) == s always holds, but the converse isn't
-// always true.
-func EscapeString(s string) string {
-	if strings.IndexAny(s, escapedChars) == -1 {
-		return s
-	}
-	var buf bytes.Buffer
-	escape(&buf, s)
-	return buf.String()
-}
-
-
 func (s *Snippet) Pygmentize() {
 	pygmentCmd := exec.Command("bash", "-c", "pygmentize -l go -f html")
 	pygmentIn, _ := pygmentCmd.StdinPipe()
 	pygmentOut, _ := pygmentCmd.StdoutPipe()
 	pygmentCmd.Start()
-	pygmentIn.Write([]byte(EscapeString(s.Code)))
+	pygmentIn.Write([]byte(s.Code))
 	pygmentIn.Close()
 	highlightedCodeBytes, _ := ioutil.ReadAll(pygmentOut)
 	s.HighlightedCode = template.HTML(highlightedCodeBytes)
