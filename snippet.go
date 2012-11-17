@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"io/ioutil"
 	"labix.org/v2/mgo/bson"
-	"os/exec"
 	_ "log"
+	"os/exec"
 )
 
 //Stores a single instance of a code snippet
@@ -40,7 +40,7 @@ func AllSnippets() (snippets []Snippet) {
 	return
 }
 
-func FindSnippet(id interface{})(snippet *Snippet) {
+func FindSnippet(id interface{}) (snippet *Snippet) {
 	session.DB("gosnip").C("snippets").FindId(id).One(&snippet)
 	return snippet
 }

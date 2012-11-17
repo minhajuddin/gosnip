@@ -8,16 +8,18 @@ import (
 	"labix.org/v2/mgo/bson"
 	"log"
 	"net/http"
+	"os/exec"
 	"strconv"
 )
 
 //TODO: should be cloing a session for each request handler, probably put it in a title
 var session *mgo.Session
 
-var templates = template.Must(template.ParseGlob("views/*.html"))
+var funcs = template.FuncMap{"appVersion": func() string { return appVersion }}
+var templates = template.Must(template.New("base").Funcs(funcs).ParseGlob("views/*.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	templates.ExecuteTemplate(w, tmpl+".html", data)
+	templates.Lookup(tmpl+".html").Funcs(funcs).Execute(w, data)
 }
 
 func getObjectId(str *string) *bson.ObjectId {
@@ -71,16 +73,25 @@ func router() *pat.Router {
 }
 
 var err error
+var appVersion = ""
 
 func main() {
+	appVersion = findAppVersion()
 	session, err = mgo.Dial("localhost")
 	exitIfError(err)
 	defer session.Close()
 	port := flag.Int("port", 3000, "port to run snippet server")
 	flag.Parse()
+	log.Println("running V", appVersion)
 	log.Println("started server on", *port)
 	http.Handle("/", router())
 	exitIfError(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
+}
+
+func findAppVersion() string {
+	gitVersionCmd := exec.Command("bash", "-c", `git log -1 --date=short --format="%ad-%h"|sed 's/-/./g'`)
+	op, _ := gitVersionCmd.Output()
+	return "V" + string(op)
 }
 
 //helpers
