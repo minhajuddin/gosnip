@@ -55,6 +55,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "index", AllSnippets())
 }
 
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "about", nil)
+}
+
 func createHandler(w http.ResponseWriter, r *http.Request) {
 	s := NewSnippet(r.FormValue("name"), r.FormValue("description"), r.FormValue("code"))
 	go CreateSnippet(s)
@@ -66,6 +70,7 @@ func router() *pat.Router {
 	r := pat.New()
 	r.Get("/new", newHandler)
 	r.Get("/show/{id}", showHandler)
+	r.Get("/about", aboutHandler)
 	r.Post("/create", createHandler)
 	r.Get("/", indexHandler)
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
