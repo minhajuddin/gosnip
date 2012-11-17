@@ -17,10 +17,6 @@ type Snippet struct {
 	HighlightedCode template.HTML
 }
 
-func (s *Snippet) HexId() (string, error) {
-	return s.Id.Hex(), nil
-}
-
 func (s *Snippet) Pygmentize() {
 	pygmentCmd := exec.Command("bash", "-c", "pygmentize -l go -f html")
 	pygmentIn, _ := pygmentCmd.StdinPipe()
