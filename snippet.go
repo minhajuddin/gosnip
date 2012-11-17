@@ -16,6 +16,10 @@ type Snippet struct{
 	HighlightedCode template.HTML
 }
 
+func (s *Snippet) HexId() (string, error) {
+	return s.Id.Hex(), nil
+}
+
 func (s *Snippet) Pygmentize() {
 	pygmentCmd := exec.Command("bash", "-c", "pygmentize -l go -f html")
 	pygmentIn, _ := pygmentCmd.StdinPipe()
@@ -37,6 +41,12 @@ func NewSnippet(name, description, code string) *Snippet {
 func AllSnippets()(snippets []Snippet) {
 	session.DB("gosnip").C("snippets").Find(nil).Iter().All(&snippets)
 	return
+}
+
+func FindSnippet(id interface{}) *Snippet {
+	snippet := new(Snippet)
+	session.DB("gosnip").C("snippets").FindId(id).One(&snippet)
+	return snippet
 }
 
 func CreateSnippet(snippet *Snippet) {
