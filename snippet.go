@@ -2,17 +2,18 @@ package main
 
 import (
 	"html/template"
-	"os/exec"
 	"io/ioutil"
 	"labix.org/v2/mgo/bson"
+	"os/exec"
+	_ "log"
 )
 
 //Stores a single instance of a code snippet
-type Snippet struct{
-	Id bson.ObjectId `bson:"_id"`
-	Name string
-	Description string
-	Code string
+type Snippet struct {
+	Id              bson.ObjectId `bson:"_id"`
+	Name            string
+	Description     string
+	Code            string
 	HighlightedCode template.HTML
 }
 
@@ -38,13 +39,12 @@ func NewSnippet(name, description, code string) *Snippet {
 
 //Returns a list of all snippets stored in the database
 //TODO: add pagination
-func AllSnippets()(snippets []Snippet) {
+func AllSnippets() (snippets []Snippet) {
 	session.DB("gosnip").C("snippets").Find(nil).Iter().All(&snippets)
 	return
 }
 
-func FindSnippet(id interface{}) *Snippet {
-	snippet := new(Snippet)
+func FindSnippet(id interface{})(snippet *Snippet) {
 	session.DB("gosnip").C("snippets").FindId(id).One(&snippet)
 	return snippet
 }
@@ -53,4 +53,3 @@ func CreateSnippet(snippet *Snippet) {
 	snippet.Pygmentize()
 	session.DB("gosnip").C("snippets").Insert(snippet)
 }
-

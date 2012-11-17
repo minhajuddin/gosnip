@@ -1,31 +1,48 @@
 package main
 
 import (
-	"code.google.com/p/gorilla/mux"
 	"code.google.com/p/gorilla/pat"
 	"flag"
 	"html/template"
 	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 	"log"
 	"net/http"
 	"strconv"
 )
 
-type ViewContext struct {
-	Template string
-	Data interface{}
-}
-
+//TODO: should be cloing a session for each request handler, probably put it in a title
 var session *mgo.Session
 
 var templates = template.Must(template.ParseGlob("views/*.html"))
 
 func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	templates.ExecuteTemplate(w, tmpl + ".html", data)
+	templates.ExecuteTemplate(w, tmpl+".html", data)
+}
+
+func getObjectId(str *string) *bson.ObjectId {
+	if str != nil && len(*str) == 24 {
+		oid := bson.ObjectIdHex(*str)
+		if oid.Valid() {
+			return &oid
+		}
+	}
+	return nil
+}
+
+func getParam(name string, r *http.Request) *string {
+	val := (r.URL.Query().Get(":" + name))
+	return &val
 }
 
 func showHandler(w http.ResponseWriter, r *http.Request) {
-	renderTemplate(w, "new", FindSnippet(mux.Vars(r)["key"]))
+	id := getObjectId(getParam("id", r))
+	s := FindSnippet(id)
+	if s == nil {
+		http.NotFound(w, r)
+		return
+	}
+	renderTemplate(w, "show", s)
 }
 
 func newHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,10 +62,10 @@ func createHandler(w http.ResponseWriter, r *http.Request) {
 
 func router() *pat.Router {
 	r := pat.New()
-	r.Get("/", indexHandler)
 	r.Get("/new", newHandler)
 	r.Get("/show/{id}", showHandler)
 	r.Post("/create", createHandler)
+	r.Get("/", indexHandler)
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
 	return r
 }
