@@ -1,6 +1,8 @@
 {{template "header.html"}}
-<input type="text" name="name" placeholder='Name' class='name' /><br />
-<textarea name="description" placeholder='Description' class='description'></textarea><br />
-<textarea name="code" placeholder='Code' class='code'></textarea><br />
-<input type="submit" value="Submit" class='submit' />
+<form action="/create" method="post">
+  <input type="text" name="name" placeholder='Name' class='name' /><br />
+  <textarea name="description" placeholder='Description' class='description'></textarea><br />
+  <textarea name="code" placeholder='Code' class='code'></textarea><br />
+  <input type="submit" value="Submit" class='submit' />
+</form>
 {{template "footer.html"}}

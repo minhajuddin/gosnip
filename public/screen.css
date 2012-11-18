@@ -8,7 +8,7 @@ textarea.description{height: 50px;}
 input.submit{font-size:1.5em;padding: 0 20px}
 .highlight{overflow-x: auto;}
 #header,#footer{background-color: #E0EBF5;padding:10px;}
-#header a,#footer a{color: #375EAB; text-decoration:none;}
+#header a,#footer a, #content a{color: #375EAB; text-decoration:none;}
 #content {padding: 10px; min-height: 400px;}
 #header h1 {float:left;}
 div#menu { float: right; padding: 10px 0; text-align: right; }
