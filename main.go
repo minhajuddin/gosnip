@@ -12,7 +12,33 @@ import (
 	"strconv"
 )
 
-//TODO: should be cloing a session for each request handler, probably put it in a title
+const databaseName = "gosnip"
+
+type context struct {
+	Request        *http.Request
+	ResponseWriter *http.ResponseWriter
+	DbSession      *mgo.Session
+	Database       *mgo.Database
+  Params map[string]string
+}
+
+func createContext(w http.ResponseWriter, r * http.Request) *context {
+  dbSession := session.Clone()
+  ctx := context{
+    Request: r,
+    ResponseWriter: &w,
+    DbSession: dbSession,
+    Database: dbSession.DB(databaseName),
+    Params: make(map[string]string,1)}
+  return &ctx
+}
+
+func httpHandler(w http.ResponseWriter, r * http.Request) {
+  //ctx := createContext(w, r)
+}
+
+
+//TODO: should be cloning a session for each request handler, probably put it in a title
 var session *mgo.Session
 
 var funcs = template.FuncMap{"appVersion": func() string { return appVersion }}
