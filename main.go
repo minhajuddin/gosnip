@@ -8,7 +8,7 @@ import (
 	"labix.org/v2/mgo/bson"
 	"log"
 	"net/http"
-	"os/exec"
+	"io/ioutil"
 	"strconv"
 )
 
@@ -120,9 +120,8 @@ func main() {
 }
 
 func findAppVersion() string {
-	gitVersionCmd := exec.Command("bash", "-c", `git log -1 --date=short --format="%ad-%h"|sed 's/-/./g'`)
-	op, _ := gitVersionCmd.Output()
-	return "V" + string(op)
+	gitVersion, _ := ioutil.ReadFile("REVISION")
+	return string(gitVersion)
 }
 
 //helpers
