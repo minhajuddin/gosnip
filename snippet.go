@@ -6,7 +6,12 @@ import (
 	"labix.org/v2/mgo/bson"
 	_ "log"
 	"os/exec"
+	"io"
+	"net/http"
+	"net/url"
 )
+
+const runUrl = "http://golang.org/compile?output=json"
 
 //Stores a single instance of a code snippet
 type Snippet struct {
@@ -27,6 +32,13 @@ func (s *Snippet) Pygmentize() {
 	highlightedCodeBytes, _ := ioutil.ReadAll(pygmentOut)
 	s.HighlightedCode = template.HTML(highlightedCodeBytes)
 	pygmentCmd.Wait()
+}
+
+func (s *Snippet) run(w io.Writer) {
+	v := url.Values{}
+	v.Set("body", s.Code)
+	resp, _ := http.PostForm(runUrl, v)
+	io.Copy(w, resp.Body)
 }
 
 func NewSnippet(name, description, code string) *Snippet {

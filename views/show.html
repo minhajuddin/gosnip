@@ -1,5 +1,36 @@
 {{template "header.html"}}
-<h2>{{.Name}}</h2>
-<p>{{.Description}}</p>
-<div>{{.HighlightedCode}}</div>
+<div id="top-pane">
+   <h2>
+      {{.Name}}
+   </h2>
+   <button id='run'>
+      Run
+   </button>
+   <p>
+      {{.Description}}
+   </p>
+   <div>
+      {{.HighlightedCode}}
+   </div>
+</div>
+<div id="bottom-pane">
+   <div id="output">
+      <pre>
+      </pre>
+   </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  $(function(){
+      $('#run').click(function(){
+        $.post('/compile/{{.Id.Hex}}', null, function(r){
+          if(typeof(r.compile_errors) === 'string' && r.compile_errors.length === 0){
+            $('#output pre').html(r.output)
+          } else {
+            $('#output pre').html(r.compile_errors)
+          }
+
+        }, 'json')
+      })
+  })
+</script>
 {{template "footer.html"}}

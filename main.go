@@ -77,6 +77,16 @@ func newHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "new", nil)
 }
 
+func compileHandler(w http.ResponseWriter, r *http.Request) {
+	id := getObjectId(getParam("id", r))
+	s := FindSnippet(id)
+	if s == nil {
+		http.NotFound(w, r)
+		return
+	}
+	s.run(w)
+}
+
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "index", AllSnippets())
 }
@@ -98,6 +108,7 @@ func router() *pat.Router {
 	r.Get("/show/{id}", showHandler)
 	r.Get("/about", aboutHandler)
 	r.Post("/create", createHandler)
+	r.Post("/compile/{id}", compileHandler)
 	r.Get("/", indexHandler)
 	http.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("public"))))
 	return r

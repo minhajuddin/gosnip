@@ -17,3 +17,34 @@ div#menu > a { color: white; background: #375EAB; }
 div#menu > a { padding: 10px; text-decoration: none; font-size: 16px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px; }
 #footer{text-align: center;}
 #footer .version{color: #888;}
+#output {
+position: relative;
+top: .3em;
+bottom: .6em;
+right: .6em;
+left: .6em;
+border: 1px solid #375EAB;
+background: #FFFFFF;
+-webkit-border-bottom-left-radius: 5px;
+-webkit-border-bottom-right-radius: 5px;
+-moz-border-radius-bottomleft: 5px;
+-moz-border-radius-tottomright: 5px;
+border-bottom-left-radius: 5px;
+border-bottom-right-radius: 5px;
+overflow: auto;
+}
+#top-pane {
+position: relative;
+top: 0;
+bottom: 30%;
+right: 0;
+left: 0;
+}
+#bottom-pane {
+position: relative;
+top: 70%;
+bottom: 0;
+right: 0;
+left: 0;
+}
+#content{position: relative;}
