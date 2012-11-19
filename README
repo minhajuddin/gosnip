@@ -16,4 +16,5 @@ Go snippets
 
 TODO
 ====
-  - Change the color to match the go package styles
+  - Add code execution using golang compiler
+    curl -d body='package main func main(){println("awesome")}' http://golang.org/compile?output=json
