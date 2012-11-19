@@ -3,9 +3,8 @@
 <div id='S{{.Name}}' class="snippet">
   <h2><a href='/show/{{.Id.Hex}}'>{{.Name}}</a></h2>
   <p>
-    {{.Description}}
+    {{.Description | printf "%.200s"}}
   </p>
-  {{.HighlightedCode}}
 </div>
 {{end}}
 {{template "footer.html"}}

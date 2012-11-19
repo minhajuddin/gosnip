@@ -1,20 +1,14 @@
 Go snippets
   - Add ability for users to login using github|google
   - A snippet's code should be formatted through gofmt
-  - A user should be able to 
+  - A user should be able to
      - Add a snippet
      - Tag a snippet
      - Comment on a snippet
      - Star a snippet
-     - Download the snippets to a local webserver or cli interface 
+     - Download the snippets to a local webserver or cli interface
      - Should be able to upvote/downvote a snippet or it's derivative
      - Search snippets
      - Sanitize the user input
 
   - Should be able to suggest an improvement through a fork?
-  - Add tweet/gplus/facebook like buttons
-
-TODO
-====
-  - Add code execution using golang compiler
-    curl -d body='package main func main(){println("awesome")}' http://golang.org/compile?output=json
